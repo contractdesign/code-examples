@@ -1,0 +1,22 @@
+---
+- name: restart
+  hosts: awshost-ubuntu
+
+  # useful links:
+  # https://support.ansible.com/hc/en-us/articles/201958037-Reboot-a-server-and-wait-for-it-to-come-back
+  # https://github.com/ansible/ansible-modules-core/issues/861
+
+  tasks:
+    - name: restart machine
+      shell: shutdown -r now
+      async: 0
+      poll: 0
+      ignore_errors: true
+      sudo: true
+
+    - name: debug variable values
+      debug: msg="System {{ inventory_hostname }} has uuid {{ ansible_product_uuid }}"
+
+    - name: waiting for server to come back
+      local_action: wait_for host={{ inventory_hostname }} state=started port=22
+      sudo: false
