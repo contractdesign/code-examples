@@ -24,8 +24,6 @@ def getData():
     '''get the JSON file containing train positions'''
     headers = {
         # TODO: remove API key 
-        'api_key': '93e8df0467a44afbb1104ceeaace0a43',
-#        'api_key': '6b700f7ea9db408e9745c207da7ca827',
     }
 
     params = urllib.urlencode({})
