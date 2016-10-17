@@ -1,0 +1,30 @@
+---
+- name: poll WMATA database
+  hosts: awshost-ubuntu
+  vars:
+    file_path: /home/ubuntu/wmata
+
+
+  tasks:
+    - name: ensure directory exists
+      file: >-
+        path={{ file_path }}
+        recurse=yes
+        state=directory
+        
+    - name: copy code
+      copy: src=./files/{{ item }} dest={{ file_path }}/{{ item }} owner=ubuntu group=ubuntu mode=555
+      with_items:
+        - db_all.py
+        - run.csh
+
+    - name: install packages
+      apt: name={{ item }} state=latest
+      with_items:
+        - sqlite3
+        - daemon
+
+    - name: run script to poll database
+      shell: daemon -n db -D {{ file_path }} {{ file_path }}/run.csh
+
+
