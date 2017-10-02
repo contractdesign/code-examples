@@ -19,10 +19,10 @@ instance, make sure to add a security group rule to allow UDP traffic
 from port 1194 in addition to the default SSH port 22 rule.  Adding
 this rule allows OpenVPN traffic to pass to the instance.
 
-4. **server**: securely copy (via `scp`) `server.conf` and the secret key file, `static.key`, created in step 2.
+4. **server**: securely copy `server.conf` and the secret key file, `static.key`, created in step 2.
 ```
     $ scp server.conf ubuntu@${AWS_IP}:/home/ubuntu
-	$ scp static.key  ubuntu@${AWS_IP}:/home/ubuntu
+    $ scp static.key  ubuntu@${AWS_IP}:/home/ubuntu
 ```
 
 
