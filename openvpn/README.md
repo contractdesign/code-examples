@@ -1,10 +1,12 @@
 # Running OpenVPN on an AWS EC2 instance
 
 This file sets up an Amazon Web Services (AWS) EC2 instance with an
-OpenVPN is static key mode.  It is based on this
+OpenVPN in static key mode.  It is based on this
 [post](https://openvpn.net/index.php/open-source/documentation/miscellaneous/78-static-key-mini-howto.html)
-from the OpenVPN website.  In this situation, the AWS EC2 instances is the
-**server** and the machine which is tunneling to it is the **client**.
+from the OpenVPN website.
+
+In the steps below, the AWS EC2 instance is the **server** and the
+machine which is tunneling to it is the **client**.
 
 # To Configure the Client and Server
 
