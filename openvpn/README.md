@@ -17,7 +17,7 @@ a security group rule to allow UDP traffic from port 1194 in addition
 to the default SSH port 22 rule.  Adding this rule allows OpenVPN
 traffic to pass to the instance.
 
-2. **client**: Modify `client.conf` to reference the IP address of the
+2. **client**: Modify [client.conf](https://github.com/contractdesign/code-examples/blob/master/openvpn/client.conf) to reference the IP address of the
    EC2 instance (`${AWS_I}` as in step 1).
 
 3. **client**: Generate the secret key
@@ -26,15 +26,13 @@ traffic to pass to the instance.
 ```
 
 
-4. **server**: Copy `server.conf` and the secret key file, `static.key`, created in step 3.
+4. **server**: Copy [server.conf](https://github.com/contractdesign/code-examples/blob/master/openvpn/server.conf) and the secret key file, `static.key`, created in step 3.
 ```
     $ scp server.conf ubuntu@${AWS_IP}:/home/ubuntu
     $ scp static.key  ubuntu@${AWS_IP}:/home/ubuntu
 ```
 
-
-
-5. **server**: Configure server to route incoming packets
+5. **server**: Configure server as a router
 ```
     $ sysctl -w net.ipv4.ip_forward=1
 ```
