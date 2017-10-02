@@ -8,18 +8,19 @@ from the OpenVPN website.  In this situation, the AWS EC2 instances is the
 
 # To Configure the Client and Server
 
-1. **client**: modify `client.conf` to reference the IP address of the EC2 instance
+1. **client**: Modify `client.conf` to reference the IP address of the EC2 instance
 
-2. **client**: generate the secret key
+2. **client**: Generate the secret key
 ```
     $ openvpn --genkey --secret static.key
 ```
-3. **server**: create an EC2 instance.  When creating the EC2
-instance, make sure to add a security group rule to allow UDP traffic
-from port 1194 in addition to the default SSH port 22 rule.  Adding
-this rule allows OpenVPN traffic to pass to the instance.
+3. **server**: Create an EC2 instance and note its IP address
+(`${AWS_IP}` below).  When creating the EC2 instance, make sure to add
+a security group rule to allow UDP traffic from port 1194 in addition
+to the default SSH port 22 rule.  Adding this rule allows OpenVPN
+traffic to pass to the instance.
 
-4. **server**: securely copy `server.conf` and the secret key file, `static.key`, created in step 2.
+4. **server**: Copy `server.conf` and the secret key file, `static.key`, created in step 2.
 ```
     $ scp server.conf ubuntu@${AWS_IP}:/home/ubuntu
     $ scp static.key  ubuntu@${AWS_IP}:/home/ubuntu
@@ -27,28 +28,29 @@ this rule allows OpenVPN traffic to pass to the instance.
 
 
 
-5. **server**: configure server to route incoming packets
+5. **server**: Configure server to route incoming packets
 ```
     $ sysctl -w net.ipv4.ip_forward=1
 ```
 
-6. **server**: configure server to NAT packets
+6. **server**: Configure server to NAT packets
 ```
     $ iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE 
 ```
 
-7. **server**: start openvpn.  The server has to be ready so that it can accept an incoming connection from the client.
+7. **server**: Start openvpn on the server.  The server has to be ready so that it can accept an incoming connection from the client.
 ```
     $ sudo openvpn --config server.conf
 ```
 
-8. **server**: start openvpn on the client.
+8. **server**: Start openvpn on the client.
 ```
     $ sudo openvpn --config client.conf
 ```
 
 After a few seconds, the log files should indicate that the connection
 has been initiated.
+
 
 ## To Verify Connection
 
