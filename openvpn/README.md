@@ -44,12 +44,17 @@ traffic to pass to the instance.
     $ iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE 
 ```
 
-7. **server**: Start openvpn on the server.  The server has to be ready so that it can accept an incoming connection from the client.
+7. **server**: Install openvpn on the server
+```
+    $ sudo apt-get install -y openvpn
+```
+
+8. **server**: Start openvpn on the server.  The server has to be ready so that it can accept an incoming connection from the client.
 ```
     $ sudo openvpn --config server.conf
 ```
 
-8. **server**: Start openvpn on the client.
+9. **server**: Start openvpn on the client.
 ```
     $ sudo openvpn --config client.conf
 ```
