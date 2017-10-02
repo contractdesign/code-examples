@@ -1,10 +1,12 @@
 # Running OpenVPN on an AWS EC2 instance
 
-## Setup
 This file sets up an Amazon Web Services (AWS) EC2 instance with an
 OpenVPN is static key mode.  It is based on this
 [post](https://openvpn.net/index.php/open-source/documentation/miscellaneous/78-static-key-mini-howto.html)
-from the OpenVPN website.
+from the OpenVPN website.  In this situation, the AWS EC2 instances is the
+**server** and the machine which is tunneling to it is the **client**.
+
+# To Configure the Client and Server
 
 1. **client**: modify `client.conf` to reference the IP address of the EC2 instance
 
@@ -12,10 +14,10 @@ from the OpenVPN website.
 ```
     $ openvpn --genkey --secret static.key
 ```
-3. **server**: reate an EC2 instance.  When creating the EC2 instance, make sure to
-add a security group rule to allow UDP traffic from port 1194 in
-addition to the default SSH port 22 rule.  Adding this rule allows
-OpenVPN traffic to pass to the instance.
+3. **server**: create an EC2 instance.  When creating the EC2
+instance, make sure to add a security group rule to allow UDP traffic
+from port 1194 in addition to the default SSH port 22 rule.  Adding
+this rule allows OpenVPN traffic to pass to the instance.
 
 4. **server**: securely copy (via `scp`) `server.conf` and the secret key file, `static.key`, created in step 2.
 ```
@@ -48,7 +50,7 @@ OpenVPN traffic to pass to the instance.
 After a few seconds, the log files should indicate that the connection
 has been initiated.
 
-## To Verify
+## To Verify Connection
 
 To verify that traffic is being forwarded from the VPN tunnel, check
 that the IP address on the **client** matches that of the server:
