@@ -8,7 +8,7 @@ from the OpenVPN website.
 In the steps below, the AWS EC2 instance is the **server** and the
 machine which is tunneling to it is the **client**.
 
-# To Configure the Client and Server
+## To Configure the Client and Server
 
 
 1. **server**: Create an EC2 instance and note its IP address
