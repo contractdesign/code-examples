@@ -20,7 +20,7 @@ To start an EC2 instance, use the command below.  Before doing so for
 the first time, you will probably need to go through the web interface
 and note the instance ID, security group id and subnet.
 
-```
+```bash
 $ aws ec2 run-instances \
 --image-id ami-ID \
 --instance-type t2.micro \
@@ -31,19 +31,21 @@ $ aws ec2 run-instances \
 
 ## List Instances
 
-To list running instances, use ```describe-instances```.  This
-commandoutputs a large JSON file, so jq can be used to print out
-fields of interest, such as Public IP address or status.
+To list running instances, use ```describe-instances```.  This command
+outputs a large JSON file, so ```jq``` can print out fields of
+interest, such as the instance's public IP address or status.
 
-```
+```bash
 $ aws ec2 describe-instances | \
   jq -r '.Reservations[].Instances[] | .InstanceId + "\t" + .State.Name + "\t" + .PublicIpAddress'
 ```
 
 ## Terminate Instances
 
-To terminate running instances, use the command below.  The instance ids of the running VMs can be retrieved using ```describe-instances```
+To terminate running instances, use the command below.  The instance
+ids of the running VMs can be retrieved using ```aws ec2
+describe-instances``` as described previously.
 
-```
+```bash
 $ aws ec2 terminate-instances --instance-ids <IDs>
 ```
