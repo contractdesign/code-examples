@@ -1,8 +1,8 @@
 # Amazon Web Services CLI
 
 Amazon Web Services offers a commandline interface (CLI) to control
-its cloud services.  They typically start with ```aws``` followed by
-the service name (e.g., ec2 or s3).  The notes below cover the CLI
+its cloud services.  The commands begin with ```aws``` followed by the
+service name (e.g., ec2 or s3).  The notes below cover the CLI
 commands for their elastic cloud 2 (EC2) service, which provisions
 virtual machines on demand.
 
