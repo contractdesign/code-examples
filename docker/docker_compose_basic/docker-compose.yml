@@ -1,0 +1,28 @@
+
+
+#
+# example compose file that brings up 3 hosts with SSH access
+#
+
+version: '3'
+services:
+  host1:
+    image: local/sshd:latest
+    tty: true
+    hostname: host1
+    domainname: internal
+
+# for run options, see https://docs.docker.com/compose/compose-file/#domainname-hostname-ipc-mac_address-privileged-read_only-shm_size-stdin_open-tty-user-working_dir
+
+  host2:
+    image: local/sshd:latest
+    tty: true
+    hostname: host2
+    domainname: internal
+
+  host3:
+    image: local/sshd:latest
+    tty: true
+    hostname: host3
+    domainname: internal
+
