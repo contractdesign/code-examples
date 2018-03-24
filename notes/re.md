@@ -15,14 +15,14 @@ Call Stack
     RBP + 8   return address
     RBP       saved RBP         <--- RBP
     RBP - 8   local variable #1
-    RBP - 16  local variable #2
+    RBP - 16  local variable #2 <--- RSP
               128B "red zone"
               
 
 
 
 
-## Static Analysis
+## Static Analysis Using objdump
 
 Disassemble a binary in Intel assembly format
 
