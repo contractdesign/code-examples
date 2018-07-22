@@ -8,6 +8,10 @@ The first 6 parameters are passed via registers ([source](https://eli.thegreenpl
 
     rdi, rsi, rdx, rcx, r8, r9
 
+The return value is passed in
+
+    rax
+
 Call Stack
 
     RBP + 24  extra parameter #1
@@ -54,8 +58,13 @@ Print address as string
 
     x/s <address>
 
+Print 4 words as strings above the stack pointer
+    x/4ws $esp
+
 Current instruction
 
     p $eip
+
+Print all registers
 
     info reg
