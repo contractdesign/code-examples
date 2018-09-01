@@ -53,4 +53,5 @@ for more details.
     aws cloudformation create-stack --template-body file://single-instance.yml --stack-name single-instance --parameters ParameterKey=KeyName,ParameterValue=tutorial
 
 To delete an instance
+
     aws ec2 terminate-instances --instance-ids <INSTANCE ID>
