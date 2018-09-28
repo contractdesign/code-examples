@@ -1,0 +1,31 @@
+import requests as r
+import json
+import datetime as dt
+
+url_base = 'https://hacker-news.firebaseio.com/v0/'
+
+def maxitem_id():
+    return r.get(url_base + 'maxitem.json').json()
+
+def user(id):
+    return r.get(url_base + 'user/%s.json' % id).json()
+
+def item(id):
+    return r.get(url_base + 'item/%s.json' % id).json()
+
+def updates():
+    return r.get(url_base + 'updates.json').json()
+
+def active_hours(id):
+    return [ dt.datetime.fromtimestamp(item(s)['time']).hour for s in user(id)['submitted']]
+    
+%matplotlib inline
+import matplotlib.pyplot as plt
+import numpy as np
+
+x = active_hours('coloneltcb')
+hist, bins = np.histogram(x, bins=24)
+width = 0.7 * (bins[1] - bins[0])
+center = (bins[:-1] + bins[1:]) / 2
+plt.bar(center, hist, align='center', width=width)
+plt.show()
