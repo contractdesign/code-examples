@@ -10,6 +10,15 @@ for other shells.
     complete -C '/usr/local/bin/aws_complete' aws
 
 
+## Configuration
+
+Make sure to configure the CLI before running any of the commands.
+The command below will ask you your AWS account number and secret key
+for that account, so be sure to have them handy.
+
+    $ aws configure
+
+
 
 ## S3 Bucket
 
@@ -46,7 +55,7 @@ List instances
 
     aws ec2 describe-instances
 
-Create an EC2 instances from a stack.  See this
+Create a EC2 instance from a stack.  See this
 [blog post](https://medium.com/boltops/a-simple-introduction-to-aws-cloudformation-part-1-1694a41ae59d)
 for more details.
 
