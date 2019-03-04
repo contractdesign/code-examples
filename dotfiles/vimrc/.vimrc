@@ -1,6 +1,9 @@
 " set color scheme
 colo elflord
 
+" show statusbar
+set laststatus=2
+
 " automatically recognize markdown files
 au BufNewFile,BufRead *.md setf markdown
 
