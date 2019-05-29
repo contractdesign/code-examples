@@ -1,0 +1,27 @@
+
+
+version: '3'
+services:
+  webserver: 
+    image: nginx:1.15-alpine
+    hostname: test2.com
+    volumes:
+#      - ./certs:/etc/nginx/certs:ro
+      - ./certs:/etc/ssl:ro
+      - ./conf.d:/etc/nginx/conf.d:ro
+    ports:
+      - "80:80"
+      - "443:443"
+    networks:
+      default:
+        aliases:
+          # test2.com works, test.com doesn't
+          - test2.com
+
+  testhost:
+#    image: busybox
+    image: alpine
+    hostname: testhost
+    volumes:
+      - .:/tmp:ro
+    command: tail -F /dev/null
