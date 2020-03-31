@@ -1,0 +1,70 @@
+---
+title: Examining NY Times's COVID-19 Data
+output: html_notebook
+
+---
+
+The NY Times publishes US-county-level counts of COVID-19 cases and deaths daily on [github](https://github.com/nytimes/covid-19-data).  This notebook combines estimated population data from the US census to identify areas with high ratios of COVID-19 cases.
+
+Read in the COVID-19 data from the nytimes:
+```{r}
+df_cases <- read.csv('./us-counties.csv')
+```
+Read in the data from the US census and merge it into NY Times data,
+```{r}
+df_pop <- read.csv('./co-est2019-alldata.csv')
+df_pop <- df_pop[c(4:5,19)]
+
+# compute fips.
+df_pop$fips <- df_pop$STATE*1000 + df_pop$COUNTY
+df_pop$STATE <- NULL
+df_pop$COUNTY <- NULL
+
+total <- merge(df_cases, df_pop, by="fips")
+total$ratio <- total$cases/total$POPESTIMATE2019
+
+```
+Let's examine a few cases of interest:
+
+```{r}
+subset(total, fips==34041 & date=='2020-03-29')
+subset(total, fips==24027 & date=='2020-03-29')
+subset(total, fips==6085 & date=='2020-03-29')
+```
+
+# Hotspots
+
+Let's find the counties with the highest ratio of cases to population.
+```{r}
+
+# get_hotspots( ratio, date )
+get_hotspots <- function(r, d) {
+    hotspots <- subset(total, ratio > r & date==d)
+    hotspots$date <- NULL
+    hotspots <- hotspots[order(hotspots$ratio, decreasing=TRUE),]
+    hotspots$deaths <- NULL  # delete to make the output fit on the page
+    return(hotspots)
+}
+
+hotspots <- get_hotspots( 0.0009, '2020-03-29')
+hotspots
+```
+
+```{r}
+library(ggplot2)
+
+plotCases <- function(f, name) {
+    data <- subset(df_cases, fips==f)
+    ggplot(data, aes(date, cases)) + geom_point() + ggtitle(paste( 'COVID-19 Cases vs. Date for ', name))
+}
+
+#plotCases(6085)
+
+plotCases(36119, 'Rockland, NY')
+plotCases(6085, 'Santa Clara, CA')
+plotCases(24027, 'Howard, MD')
+plotCases(34041, 'Warren, NJ')
+
+plotCases(22071, 'New Orleans, LA')
+
+```
