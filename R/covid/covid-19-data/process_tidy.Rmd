@@ -74,4 +74,6 @@ plotCases(22071)
 plotCases(6085)
 plotCases(24027)
 plotCases(34041)
+plotCases(41067)
+plotCases(45043)
 ```
