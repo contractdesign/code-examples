@@ -61,7 +61,7 @@ library(ggplot2)
 plotCases <- function(f) {
     data <- df_cases %>% filter(fips==f)
     elem <- (data %>% slice(1))
-    ggplot(data, aes(date, cases)) + geom_point() + ggtitle(sprintf('COVID-19 Cases vs. Date for %s, %s (FIPS=%d)',
+    ggplot(data, aes(date, cases)) + geom_point() + ggtitle(sprintf('COVID-19 Cases vs. Date for %s County, %s (FIPS=%d)',
         elem$county, elem$state, elem$fips))
 }
 
