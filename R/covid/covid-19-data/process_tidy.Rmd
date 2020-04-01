@@ -4,32 +4,46 @@ output: html_notebook
 ---
 
 The NY Times publishes US-county-level counts of COVID-19 cases and deaths daily on [github](https://github.com/nytimes/covid-19-data).  This notebook combines this data with
-the estimated population data from the US census to identify areas with high ratios of COVID-19 cases.
+the estimated population data from the US census to identify areas with high ratios of COVID-19 cases (aka "hotspots")
 
 First, let's read in the COVID-19 data from the NY Times.  Each county is identified by a [FIPS code](https://en.wikipedia.org/wiki/FIPS_county_code).
 ```{r}
 library(tidyverse)
 
-knitr::opts_chunk$set(warning=FALSE, message=FALSE)
-
-df_cases <- read_csv('./us-counties.csv') %>%
-    mutate_at( "fips", as.numeric)
-
+col_types <- cols(
+  date = col_date(format = ""),
+  county = col_character(),
+  state = col_character(),
+  fips = col_integer(),
+  cases = col_double(),
+  deaths = col_double()
+)
+df_cases <- read_csv('./us-counties.csv', col_types=col_types)
 ```
-Let's read in the population data from the US census.  It requires some munging to create a FIPS column, so that we can join it with the NY Times data,
+Let's read in the population data from the US census.  It requires some munging to create a FIPS column, which is required for this data to be combined with the NY Times data,
 ```{r}
-df_pop <- read_csv('./co-est2019-alldata.csv') %>%
+col_types <- cols(
+  .default = col_double(),
+  SUMLEV = col_character(),
+  STATE = col_integer(),
+  COUNTY = col_integer(),
+  STNAME = col_character(),
+  CTYNAME = col_character()
+)
+
+df_pop <- read_csv('./co-est2019-alldata.csv', col_types=col_types) %>%
     select( "COUNTY", "STATE", "POPESTIMATE2019") %>%
-    mutate_at( "COUNTY", as.numeric) %>%
-    mutate_at( "STATE", as.numeric) %>%
     mutate(fips=STATE*1000 + COUNTY) %>%
     select("fips", POPESTIMATE2019)
 ```
 Merge it into the NY Times data by the shared column, fips,
 ```{r}
-df_cases <- left_join(df_cases, df_pop)
+df_cases <- left_join(df_cases, df_pop, by="fips")
 ```
-Let's add a new column that is the ratio of COVID-19 cases to each county's population.  Counties with a high ratio could be classified as a hotspot.  Let's print out the top 100 counties with the highest ratio,
+Let's add a new column that is the ratio of COVID-19 cases to each county's population.  Counties with a high ratio could be classified as a hotspot.  Note that the NYC counties (King's, Queen's, etc.) are a hotspot right now but are missing.  That's
+because the NY Times has chosen to break NYC's data out separately.
+
+Let's print out the top 100 counties with the highest ratio,
 ```{r}
 df_cases <- df_cases %>%
     mutate(ratio = cases/POPESTIMATE2019)
@@ -42,7 +56,6 @@ df_cases %>%
 Let's plot the cases vs. time a few of the hotspots.  Are any of them showing a deceleration in the number of cases?
 
 ```{r}
-
 library(ggplot2)
 
 plotCases <- function(f) {
@@ -55,9 +68,10 @@ plotCases <- function(f) {
 plotCases(36119)
 plotCases(36087)
 plotCases(16013)
+plotCases(22071)
 
+# a few place of personal interest
 plotCases(6085)
 plotCases(24027)
 plotCases(34041)
-
 ```
