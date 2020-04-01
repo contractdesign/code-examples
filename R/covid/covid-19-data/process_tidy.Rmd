@@ -1,0 +1,63 @@
+---
+title: Examining NY Times's COVID-19 Data
+output: html_notebook
+---
+
+The NY Times publishes US-county-level counts of COVID-19 cases and deaths daily on [github](https://github.com/nytimes/covid-19-data).  This notebook combines this data with
+the estimated population data from the US census to identify areas with high ratios of COVID-19 cases.
+
+First, let's read in the COVID-19 data from the NY Times.  Each county is identified by a [FIPS code](https://en.wikipedia.org/wiki/FIPS_county_code).
+```{r}
+library(tidyverse)
+
+knitr::opts_chunk$set(warning=FALSE, message=FALSE)
+
+df_cases <- read_csv('./us-counties.csv') %>%
+    mutate_at( "fips", as.numeric)
+
+```
+Let's read in the population data from the US census.  It requires some munging to create a FIPS column, so that we can join it with the NY Times data,
+```{r}
+df_pop <- read_csv('./co-est2019-alldata.csv') %>%
+    select( "COUNTY", "STATE", "POPESTIMATE2019") %>%
+    mutate_at( "COUNTY", as.numeric) %>%
+    mutate_at( "STATE", as.numeric) %>%
+    mutate(fips=STATE*1000 + COUNTY) %>%
+    select("fips", POPESTIMATE2019)
+```
+Merge it into the NY Times data by the shared column, fips,
+```{r}
+df_cases <- left_join(df_cases, df_pop)
+```
+Let's add a new column that is the ratio of COVID-19 cases to each county's population.  Counties with a high ratio could be classified as a hotspot.  Let's print out the top 100 counties with the highest ratio,
+```{r}
+df_cases <- df_cases %>%
+    mutate(ratio = cases/POPESTIMATE2019)
+
+df_cases %>%
+    arrange(desc(date), desc(ratio)) %>%
+    top_n(100)
+```
+
+Let's plot the cases vs. time a few of the hotspots.  Are any of them showing a deceleration in the number of cases?
+
+```{r}
+
+library(ggplot2)
+
+plotCases <- function(f) {
+    data <- df_cases %>% filter(fips==f)
+    elem <- (data %>% slice(1))
+    ggplot(data, aes(date, cases)) + geom_point() + ggtitle(sprintf('COVID-19 Cases vs. Date for %s, %s (FIPS=%d)',
+        elem$county, elem$state, elem$fips))
+}
+
+plotCases(36119)
+plotCases(36087)
+plotCases(16013)
+
+plotCases(6085)
+plotCases(24027)
+plotCases(34041)
+
+```
