@@ -1,0 +1,82 @@
+---
+title: "Megabus Analysis"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+This notebook contains analyses of Megabus prices and journeys between NYC and Baltimore, MD.
+
+```{r}
+library(tidyverse)
+library(lubridate)
+library(hms)
+library(ggplot2)
+
+setwd("~/Documents/git/code-examples/R/megabus")
+df <- read_csv("./megabus.csv")
+
+# wday 1 is 
+data <- df %>%
+  mutate(creation_date = lubridate::date(creation_datetime),
+         departure_date = lubridate::date(departure_datetime),
+         departure_time = as_hms(departure_datetime),
+         departure_wday = lubridate::wday(departure_datetime, label=TRUE, abbr=TRUE)) %>%
+  select( -creation_datetime, -departure_datetime)
+as_tibble(data)
+```
+
+# Prices
+
+Find all dollar fares on weekends
+```{r}
+data %>%
+  select(-creation_date, -journeyId) %>%
+  filter(price==1.00 & ((departure_wday=="Sat") | (departure_wday=="Sun"))) %>%
+  arrange(departure_date, departure_time)
+
+```
+
+# Journey Frequencies
+
+Count journeys
+```{r}
+journeys <- data %>%
+  filter(start_city==143) %>%
+  select(departure_date, journeyId) %>%
+  group_by(departure_date) %>% summarise(frequency = n())
+  
+ggplot(journeys, aes(departure_date, frequency)) + geom_point() + ggtitle('Journey Frequency for 143 to 123')
+
+journeys <- data %>%
+  filter(start_city==123) %>%
+  select(departure_date, journeyId) %>%
+  group_by(departure_date) %>% summarise(frequency = n())
+  
+ggplot(journeys, aes(departure_date, frequency)) + geom_point() + ggtitle('Journey Frequency for 123 to 143')
+
+
+```
+
+
+Histogram of prices
+
+```{r, echo=FALSE}
+ggplot(data %>% filter(start_city==123), aes(x=price)) +
+  geom_histogram(color="black", fill="white", binwidth=1) +
+  geom_vline(aes(xintercept=mean(price)),
+            color="blue", linetype="dashed", size=1) +
+  ggtitle('Histogram of Prices from 123 to 143')
+
+ggplot(data %>% filter(start_city==143), aes(x=price)) +
+  geom_histogram(color="black", fill="white", binwidth=1) +
+  geom_vline(aes(xintercept=mean(price)),
+            color="blue", linetype="dashed", size=1) +
+  ggtitle('Histogram of Prices from 143 to 123')
+
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
