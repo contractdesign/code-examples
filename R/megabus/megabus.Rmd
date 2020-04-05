@@ -79,4 +79,18 @@ ggplot(data %>% filter(start_city==143), aes(x=price)) +
 
 ```
 
+
+The tidy framework prefers data in 'tidy' format: a series of columns with each row as a separate observation.  The function 'pivot_wider()' reformats a tibble with data from selected rows represented horizontally.  Note that all of the remaining rows to be collapsed must be identical.  In this case, the 'journeyId' is removed to satisfy this requirement.
+```{r}
+data %>%
+  filter(start_city==143) %>%
+  select(-journeyId) %>%
+  select( -departure_wday, -creation_date) %>%
+  pivot_wider(names_from=departure_time, names_prefix="t_", values_from=price) %>%
+  select(sort(current_vars()) )
+
+
+```
+
+
 Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
