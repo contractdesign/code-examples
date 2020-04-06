@@ -1,0 +1,106 @@
+---
+title: "analysis"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Capital Bikeshare
+
+
+```{r, echo=FALSE}
+library(tidyverse)
+library(lubridate)
+library(hms)
+library(ggplot2)
+
+
+read_in <- function(filename) {
+  col_types = cols (
+  Duration = col_double(),
+  `Start date` = col_datetime(format = ""),
+  `End date` = col_datetime(format = ""),
+  `Start station number` = col_double(),
+  `Start station` = col_character(),
+  `End station number` = col_double(),
+  `End station` = col_character(),
+  `Bike number` = col_character(),
+  `Member type` = col_character()
+  )
+  return(read_csv(filename, col_types = col_types))
+}
+  
+df <- dir(pattern="*.csv") %>%
+    map(read_in) %>%
+    reduce(rbind) %>%
+    mutate(Duration_period = seconds_to_period(Duration)) %>%
+    mutate(start_date = lubridate::date(`Start date`)) %>%
+    select(-`Bike number`)
+
+glimpse(df)
+
+```
+
+List all of the rides that last more than 23 hours
+```{r}
+temp <- df %>%
+  filter(Duration > 23*60*60) %>%
+  arrange(desc(Duration))
+
+View(temp)
+
+```
+
+Find number of members vs. number of casual
+```{r}
+
+temp <- df %>%
+  group_by(`Member type`) %>%
+  count()
+
+temp
+
+
+```
+
+
+## Bike Ridership Over Time
+
+
+```{r}
+temp <- df %>%
+  group_by(start_date) %>%
+  count()
+ggplot(temp, aes(start_date, n)) + geom_point() + ggtitle('# of Bike Rides vs. Date') + ylim(0,NA)
+
+
+
+```
+
+
+## Most Popular Start Destinations
+
+```{r}
+
+temp <- df %>%
+  group_by(`Start station`) %>%
+  count() %>%
+  arrange(desc(n))
+
+View(temp)
+
+```
+
+
+```{r}
+
+temp <- df %>%
+  filter( `Start station number`==31623 & `End station number`==31248 & Duration< 5000)
+
+ggplot(temp, aes(x=Duration)) +
+  geom_histogram(color="black", fill="white", binwidth=30)
+
+
+```
