@@ -6,14 +6,16 @@
 import requests
 import bs4
 
+
+headers = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.95 Safari/537.36'}
 #
 # retrieve a dictionary of details for the specified WARN
 #
 def get_WARN_details(url):
     """Given the URL for a specific WARN, parse the page and return some of the fields
     in a dictionary"""
-    page = requests.get(url)
-    soup = bs4.BeautifulSoup(page.content.decode('utf-8','ignore'))
+    page = requests.get(url, headers=headers)
+    soup = bs4.BeautifulSoup(page.content.decode('utf-8','ignore'), features="html.parser")
     
     d_details = {}
     for p in soup.find_all('p'):
@@ -35,11 +37,11 @@ def get_WARN_details(url):
 #
 def get_WARN(l_fields, basename='https://labor.ny.gov/app/warn/'):
     """Parse the main WARN webpage and return a list of dictionary containing each WARN's data"""
-    page = requests.get(basename)
+    page = requests.get(basename, headers=headers)
     l_warn = []
     
     # for utf-8 decoding, see https://stackoverflow.com/questions/7219361/python-and-beautifulsoup-encoding-issues
-    soup = bs4.BeautifulSoup(page.content.decode('utf-8','ignore'))
+    soup = bs4.BeautifulSoup(page.content.decode('utf-8','ignore'), features="html.parser")
       
     # print CSV header
     for key in l_fields:
