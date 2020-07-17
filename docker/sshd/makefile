@@ -3,11 +3,11 @@ NAME=sshd
 
 
 build:
-	docker build -t $(NAME) .
+	docker build -t ${NAME} .
 
 run:
-	docker run -dt $(NAME)
+	docker run -dt ${NAME}
 
 clean:
-	docker rmi --force $(NAME)
+	docker rmi --force ${NAME}
 

@@ -1,5 +1,8 @@
 
 
+# to get rid of cached containers
+# docker container prune
+
 # TODO: assign fixed IP addresses
 
 version: '3'

@@ -1,28 +1,18 @@
 
-#
-# based on
-# https://github.com/dockerfile/ubuntu/blob/master/Dockerfile
-#
-FROM ubuntu:14.04
+# https://docs.docker.com/engine/examples/running_ssh_service/
 
-RUN \
-  sed -i 's/# \(.*multiverse$\)/\1/g' /etc/apt/sources.list && \
-  apt-get update && \
-  apt-get -y upgrade && \
-  apt-get install -y openssh-server && \
-  rm -rf /var/lib/apt/lists/* && \
-  adduser --disabled-password --gecos "" ubuntu
+FROM ubuntu:16.04
 
+RUN apt-get update && apt-get install -y openssh-server
+RUN mkdir /var/run/sshd
+RUN echo 'root:password' | chpasswd
+RUN sed -i 's/PermitRootLogin prohibit-password/PermitRootLogin yes/' /etc/ssh/sshd_config
 
-COPY ./id_rsa.pub /home/ubuntu/.ssh/authorized_keys
-RUN chown ubuntu /home/ubuntu/.ssh/authorized_keys
+# SSH login fix. Otherwise user is kicked off after login
+RUN sed 's@session\s*required\s*pam_loginuid.so@session optional pam_loginuid.so@g' -i /etc/pam.d/sshd
 
-ENV HOME /home/ubuntu
-WORKDIR /home/ubuntu
+ENV NOTVISIBLE "in users profile"
+RUN echo "export VISIBLE=now" >> /etc/profile
 
-
-
-# bash is invoked to keep the container from exiting
-USER root
-CMD /etc/init.d/ssh start && bash
-
+EXPOSE 22
+CMD ["/usr/sbin/sshd", "-D"]
