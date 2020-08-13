@@ -1,0 +1,12 @@
+---
+- hosts: all
+
+  tasks:
+  - name: create user
+    user:
+       name: james
+       shell: /bin/bash
+       groups: sudo
+       append: yes
+       password: '*'
+
