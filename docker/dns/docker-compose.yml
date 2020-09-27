@@ -1,0 +1,34 @@
+
+version: '3.3'
+
+services:
+    test_1.com:
+        image: alpine
+        container_name: 'test_1'
+        command: tail -f /dev/null
+        extra_hosts:
+            - "testhost.com:8.8.8.8"
+        networks:
+            - vpcbr
+
+    test_2:
+        image: alpine
+        container_name: 'test_2'
+        hostname: 'test_2.com'
+        command: tail -f /dev/null
+        networks:
+            - vpcbr
+
+    www.test_3.com:
+        image: alpine
+        command: tail -f /dev/null       
+        networks:
+            - vpcbr
+
+
+networks:
+    vpcbr:
+        driver: bridge
+        ipam:
+            config:
+                - subnet: 172.21.0.0/16
