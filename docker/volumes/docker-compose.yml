@@ -1,0 +1,34 @@
+
+#
+# Experiments with docker volumes
+#
+# run with docker version 19.03.12
+#
+# /share_tmp is read-only
+# /share_tmp/data is read-write but temporary
+# /share is a docker volume
+#
+# it creates a directory in:
+#    /var/lib/docker/volumes/
+# Note: need root to access
+
+version: '3.5'
+
+services:
+    server:
+        image: alpine:latest
+        command: tail -f /dev/null
+        tmpfs:
+            - /share_tmp/data
+        volumes:
+            - /tmp/share:/share_tmp:ro
+            - share:/share
+
+
+#        deploy:
+#            replicas: 6
+
+
+
+volumes:
+    share:
