@@ -1,0 +1,138 @@
+<!--https://github.com/metro-sign/dc-metro-->
+
+<!--
+    call with URL and parameters, e.g.,
+
+    https://domain.com/index.html?locationCode=B08&group=2
+
+
+-->
+
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <title>LED Display</title>
+</head>
+
+
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@500&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Source+Code+Pro:wght@600&display=swap');
+
+    body {
+        color: #ff0000;
+        font-family: 'Source Code Pro', monospace;
+        font-size: 88px;
+        margin-top: 0px;
+        margin-right: 0px;
+        margin-bottom: 0px;
+        margin-left: 0px;
+        background: #000000;
+        width: 1024px;
+        height: 768px;
+    }
+
+    p {
+        margin: 0;
+    }
+
+    .header {
+        color: #ff0000;
+        margin-top: 0px;
+        margin-bottom: 0px;
+        margin: 0;
+        white-space: pre-wrap;
+    }
+
+    #trains {
+        color: #ffff00;
+        margin-top: 0px;
+        margin-bottom: 0px;
+        margin: 0;
+        white-space: pre-wrap;
+    }
+</style>
+
+<script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js'></script>
+
+<script>
+    // extract URL from URL
+    $.urlParam = function(name){
+        var results = new RegExp('[\?&]' + name + '=([^&#]*)').exec(window.location.href);
+        if (results==null) {
+            return null;
+        }
+        return decodeURI(results[1]) || 0;
+    }
+
+    const interval = 20000;  // update time in milliseconds
+    const len_destination = 8;  // number of characters to truncate/pad destination to.
+    const len_minutes = 3; // number of characters to truncate/pad minutes to.
+    const locationCode = $.urlParam('locationCode') || 'B08';
+    const group = $.urlParam('group') || '2';
+
+
+
+    function processTrainData(d, locationCode, group) {
+        $("#trains").empty();
+
+        var i;
+        var destination;
+        var LocationName = '?';
+        for( i=0; i < d.Trains.length; i += 1) {
+            if( d.Trains[i].Group===group &&
+                d.Trains[i].LocationCode===locationCode ) {
+
+                destination = d.Trains[i].Destination;
+
+                // see https://github.com/metro-sign/dc-metro/blob/main/src/metro_api.py, line 44
+                if( destination === 'No Passenger' ||
+                    destination === 'NoPssenger' ||
+                    destination === 'ssenger') {
+                    destination = 'No Psngr'
+                }
+
+                // make destination exactly 8 characters long to fit into display
+                destination = d.Trains[i].Destination.substring(0, len_destination);
+                destination = destination.padEnd(len_destination);
+
+                minutes = d.Trains[i].Min.substring(0, len_minutes);
+                minutes = minutes.padStart(len_minutes, ' ');
+                // TODO minutes = minutes.rjust(3);
+
+                $("#trains").append("<p>" + d.Trains[i].Line + " " + 
+                     d.Trains[i].Car + " " + 
+                     destination + " " + 
+                     minutes + "</p>");
+                //console.log(d.Trains[i]);
+                LocationName = d.Trains[i].LocationName;
+            }
+        }
+        document.title = LocationName + ":" + group;
+    }
+    function getData() {
+        $.ajax({
+            url: 'https://rail_predictions.contractdesign.workers.dev/',
+            type: 'GET',
+        }).done(function (b) {
+            processTrainData(b, locationCode, group)
+        }).fail(function () {
+            console.error('unable to access data from WMATA')
+        })
+    }
+
+    getData();
+    var intervalID = setInterval(getData, interval);
+</script>
+
+<!-- https://www.wmata.com/business/procurement/solicitations/documents/Manual%20of%20Graphics%20Standards_03032008_pages_101-201.pdf-->
+
+<body>
+    <p class="header">LN CAR DEST &nbsp;&nbsp;MIN</p>
+    <div id="trains">
+    </div>
+
+</body>
+
+</html>
