@@ -1,0 +1,77 @@
+---
+title: "fastfood"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+[data](https://github.com/rfordatascience/tidytuesday/tree/master/data/2018/2018-09-04)
+
+wget https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2018/2018-09-04/fastfood_calories.csv
+
+
+```{r}
+library(tidyr)
+library(dplyr)
+library(ggplot2)
+df <- read.csv(file='/home/john/Documents/github/code-examples/R/fastfood/fastfood_calories.csv', sep=",") %>% drop_na()
+
+
+# Taco Bell
+df %>% ggplot(aes(restaurant, cholesterol)) +
+  geom_boxplot(outlier.shape = NA) +
+  scale_y_continuous(limits = quantile(df$cholesterol, c(0.1, 0.9))) +
+  labs(x="Restaurant", y="Cholesterol [mg]")
+
+# Chick-Fil-A, Taco Bell
+df %>% ggplot(aes(restaurant, calories)) +
+  geom_boxplot(outlier.shape = NA) +
+  scale_y_continuous(limits = quantile(df$calories, c(0.1, 0.9))) +
+  labs(x="Restaurant", y="Calories [kcal]")
+
+# Chick-Fil-A, Dairy Queen
+df %>% ggplot(aes(restaurant, total_carb)) +
+  geom_boxplot(outlier.shape = NA) +
+  scale_y_continuous(limits = quantile(df$total_carb, c(0.1, 0.9))) +
+  labs(x="Restaurant", y="Total Carbohydrates [g]")
+
+# Chick-Fil-A, Subway
+df %>% ggplot(aes(restaurant, total_fat)) +
+  geom_boxplot(outlier.shape = NA) +
+  scale_y_continuous(limits = quantile(df$total_fat, c(0.1, 0.9))) +
+  labs(x="Restaurant", y="Total Fat [g]")
+
+# TODO: 
+df %>% ggplot(aes(restaurant, sat_fat)) +
+  geom_boxplot(outlier.shape = NA) +
+  scale_y_continuous(limits = quantile(df$sat_fat, c(0.1, 0.9))) +
+  labs(x="Restaurant", y="Saturated Fat [g]")
+
+df %>% ggplot(aes(restaurant, trans_fat)) +
+  geom_boxplot(outlier.shape = NA) +
+  scale_y_continuous(limits = quantile(df$trans_fat, c(0.1, 0.9))) +
+  labs(x="Restaurant", y="Trans Fat [g]")
+
+# Chick-Fil-A, Taco Bell
+df %>% ggplot(aes(restaurant, sodium)) +
+  geom_boxplot(outlier.shape = NA) +
+  scale_y_continuous(limits = quantile(df$sodium, c(0.1, 0.9))) +
+  labs(x="Restaurant", y="Sodium [mg]")
+
+# McDonalds, Subway  
+df %>% ggplot(aes(restaurant, protein)) +
+  geom_boxplot(outlier.shape = NA) +
+  scale_y_continuous(limits = quantile(df$protein, c(0.1, 0.9))) +
+  labs(x="Restaurant", y="Protein [g]")
+
+
+
+
+
+```
+
+
