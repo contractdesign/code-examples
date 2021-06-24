@@ -1,0 +1,32 @@
+#!/usr/bin/env bpftrace
+
+BEGIN
+{
+    printf("hello");
+}
+
+/*
+k:arp_* /comm == "ping"/
+{
+    printf( "%s\t%s\n", comm, func );
+}
+*/
+
+/*
+struct sk_buff *arp_create(int type, int ptype, __be32 dest_ip,
+               struct net_device *dev, __be32 src_ip,
+               const unsigned char *dest_hw,
+               const unsigned char *src_hw,
+               const unsigned char *target_hw)
+*/
+
+// x86 does not support arg6
+// printf() takes up to 7 arguments
+// k:arp_create /comm == "ping"/
+k:arp_create
+{
+    printf( "%d\t%s\n\t%d\t%d\t%s\t%s\t\n", pid, comm, arg0, arg1, ntop(arg2),
+    ntop(arg4));
+
+
+}
