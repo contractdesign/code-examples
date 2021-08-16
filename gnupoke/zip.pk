@@ -1,0 +1,83 @@
+
+
+// little endian
+
+type Zip_local_file_header = 
+struct
+{
+    uint32 signature = 0x4034b50;
+    uint16 version;
+    uint16 flag;
+    uint16 compression;
+    uint16 time;
+    uint16 date;
+    uint32 crc;
+    uint32 compressed_size;
+    uint32 uncompressed_size;
+    uint16 filename_len;
+    uint16 extra_len;
+    char[filename_len] filename;
+    byte[extra_len]    extra;
+
+
+    method _print = void:
+    {
+        printf "filename: %s\n", catos(filename);
+
+        printf "compressed size:\t%<integer:%u32d%>\n", compressed_size;
+        printf "uncompressed size:\t%<integer:%u32d%>\n", uncompressed_size;
+
+    }
+};
+
+type Zip_CDH = 
+struct
+{
+    uint32 signature = 0x2014b50;
+    uint16 version;
+    uint16 version_needed;
+    uint16 flag;
+    uint16 compression;
+    uint16 time;
+    uint16 date;
+    uint32 crc;
+    uint32 compressed_size;
+    uint32 uncompressed_size;
+    uint16 filename_len;
+    uint16 extra_len;
+    uint16 comment_len;
+    uint16 disk_num;
+    uint16 internal_attr;
+    uint32 external_addr;
+    uint32 offset;
+
+    char[filename_len] filename;
+    byte[extra_len]    extra;
+    byte[comment_len] comment;
+
+
+    method _print = void:
+    {
+        printf "filename: %s\n", catos(filename);
+
+        printf "compressed size:\t%<integer:%u32d%>\n", compressed_size;
+        printf "uncompressed size:\t%<integer:%u32d%>\n", uncompressed_size;
+
+    }
+};
+
+
+// end of 
+type Zip_EOCD =
+struct
+{
+    uint32 signature = 0x6054b50; 
+    uint16 num_disk;
+    uint16 disk_start;
+    uint16 num_cdr;
+    uint16 total_cdr;
+    uint32 size;
+    uint32 offset;
+    uint16 comment_len;
+    char[comment_len] comment;
+};
